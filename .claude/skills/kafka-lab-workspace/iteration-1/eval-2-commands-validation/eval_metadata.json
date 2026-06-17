@@ -1,0 +1,11 @@
+{
+  "eval_id": 2,
+  "eval_name": "commands-validation",
+  "prompt": "lab2-4 실험 시작하려는데 commands.sh 확인해줘",
+  "assertions": [
+    {"name": "프로파일 A~F 설명", "description": "각 Spring 프로파일(batch-A, batch-B 등)의 설정값을 설명했는가"},
+    {"name": "docker stop 위험 경고", "description": "commands.sh 내 docker stop 명령어의 주의사항을 경고했는가"},
+    {"name": "Spring 프로파일 활성화 방법 안내", "description": "SPRING_PROFILES_ACTIVE 환경변수 설정 방법을 안내했는가"},
+    {"name": "실험 순서 가이드", "description": "어떤 프로파일을 먼저 실행해야 하는지 순서 가이드를 제공했는가"}
+  ]
+}

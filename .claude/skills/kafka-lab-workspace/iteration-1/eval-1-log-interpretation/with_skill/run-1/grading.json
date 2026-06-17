@@ -1,0 +1,32 @@
+{
+  "eval_id": 1,
+  "run": "with_skill",
+  "expectations": [
+    {
+      "text": "min.insync.replicas 원인 설명",
+      "passed": true,
+      "evidence": "line 22-33: 'NOT_ENOUGH_REPLICAS (errorCode=19)는 브로커가 PRODUCE 요청을 거부하며... ISR(In-Sync Replicas) 수 < min.insync.replicas 일 때' 명확히 설명"
+    },
+    {
+      "text": "재시도 횟수 의미 설명",
+      "passed": true,
+      "evidence": "line 39-47: '2147483646 = Integer.MAX_VALUE - 1', delivery.timeout.ms=120s가 실제 중단 조건임을 명시"
+    },
+    {
+      "text": "ISR 상태 연관성 설명",
+      "passed": true,
+      "evidence": "line 30-33: lab2-3 실험 3-2 시나리오와 매핑하여 ISR=1 < min.insync.replicas=2 조건 설명"
+    },
+    {
+      "text": "복구 방법 안내",
+      "passed": true,
+      "evidence": "line 68-78: kafka-topics.sh --describe 명령어로 ISR 상태 확인, 브로커 재기동으로 복구하는 구체적 명령어 제시"
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 0,
+    "total": 4,
+    "pass_rate": 1.0
+  }
+}
