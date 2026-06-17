@@ -1,12 +1,12 @@
 ---
 name: run-scenario
-description: "kakaopay-coupon 시나리오 실행 오케스트레이터. harness/coupon-event-domain.md를 읽어 HC 검증·SLO 판정·이상패턴 대응을 자동 적용. 사용자는 시나리오 ID만 입력하면 됨. Use when: '/run-scenario A', '/run-scenario B', '시나리오 A 실행', '시나리오 B 돌려줘'. kakaopay-coupon 프로젝트(/Users/mando/kakaopay-coupon)에서만 유효."
+description: "kakaopay-coupon 시나리오 실행 오케스트레이터. domain/coupon-event-domain.md를 읽어 HC 검증·SLO 판정·이상패턴 대응을 자동 적용. 사용자는 시나리오 ID만 입력하면 됨. Use when: '/run-scenario A', '/run-scenario B', '시나리오 A 실행', '시나리오 B 돌려줘'. kakaopay-coupon 프로젝트(/Users/mando/kakaopay-coupon)에서만 유효."
 ---
 
-# run-scenario — 도메인 하네스 기반 자동 실행
+# run-scenario — 도메인 지식 기반 자동 실행
 
 > **핵심 원칙**: 판정 기준은 프롬프트에 적지 않는다.
-> `harness/coupon-event-domain.md`에서 자동으로 읽어온다.
+> `domain/coupon-event-domain.md`에서 자동으로 읽어온다.
 
 ---
 
@@ -15,7 +15,7 @@ description: "kakaopay-coupon 시나리오 실행 오케스트레이터. harness
 **반드시 먼저 실행.** 나머지 모든 단계의 판단 근거가 된다.
 
 ```
-Read /Users/mando/kakaopay-coupon/harness/coupon-event-domain.md
+Read /Users/mando/kakaopay-coupon/domain/coupon-event-domain.md
 ```
 
 로드 후 추출:
@@ -101,11 +101,11 @@ curl -sf http://localhost:8080/actuator/prometheus | grep -c "hikaricp_connectio
 
 ```bash
 # 어댑터에 맞게 초기화
-bash perf-test/reset-test-data.sh {ADAPTER_TYPE}
+bash perf-test/setup-reset-data.sh {ADAPTER_TYPE}
 
 # 연기 smoke 테스트 (JVM 웜업)
-k6 run perf-test/smoke.js --quiet
-bash perf-test/reset-test-data.sh {ADAPTER_TYPE}  # smoke 후 재초기화
+k6 run perf-test/k6-smoke.js --quiet
+bash perf-test/setup-reset-data.sh {ADAPTER_TYPE}  # smoke 후 재초기화
 ```
 
 ---
@@ -123,7 +123,7 @@ k6 run \
   -e ADAPTER={ADAPTER}          \
   -e TARGET_RPS={TARGET_RPS}    \  # 하네스에서 읽어온 값
   --summary-export=perf-test/results/$LABEL-summary.json \
-  perf-test/load.js
+  perf-test/k6-load.js
 ```
 
 **k6 종료 직후 즉시 Step 5로.** 지표는 now-8m 안에만 있다.
@@ -133,7 +133,7 @@ k6 run \
 ## Step 5: 메트릭 캡처
 
 ```bash
-bash perf-test/capture-metrics.sh $LABEL 8
+bash perf-test/metrics-capture.sh $LABEL 8
 ```
 
 11개 Grafana 패널 + metrics-summary.json 자동 저장.
@@ -175,46 +175,6 @@ HC_EXIT=$?
 감지된 패턴은 해당 ANOMALY 섹션의 **대응 액션을 그대로 인용**한다.
 
 ---
-
-## Step 7.5: 이전 라운드 대비 비교 (변경 전 수치 강제 확보)
-
-**"변경 전 수치 없이는 좋아졌다고 말할 수 없다" — 5원칙 2번 기계적 강제**
-
-```bash
-bash perf-test/compare-metrics.sh {LABEL}
-# PREV_LABEL 생략 시 → docs/perf-reports/ 에서 가장 최근 라운드 자동 탐색
-# 첫 라운드면 "기준선 수립"으로 기록
-```
-
-**출력**: `docs/perf-reports/{LABEL}/comparison.md`
-
-| 판정 | 의미 | 다음 액션 |
-|---|---|---|
-| ✅ 개선 (≤-5%) | 변경이 효과 있음 | REPORT에 근거로 활용 |
-| ➡️ 유지 (-5%~+5%) | 변경이 성능 중립 | 기능 변경이면 OK |
-| ⚠️ 주의 (+5%~+20%) | 소폭 악화 | 원인 파악 후 허용 여부 판단 |
-| ❌ 악화 (>+20%) | 성능 회귀 | L1→L4 레이어 분석 진입 필수 |
-
-**❌ 악화 감지 시** → 즉시 화이트박스 분석 자동 실행:
-
-```bash
-# compare-metrics.sh 가 exit 1 반환 시 연속 실행
-bash perf-test/compare-metrics.sh {LABEL}
-COMPARE_EXIT=$?
-
-if [ $COMPARE_EXIT -eq 1 ]; then
-  echo "❌ 성능 악화 감지 — 화이트박스 분석 진입 (L3→L4)"
-  bash perf-test/profile-on-degradation.sh {LABEL}
-fi
-```
-
-분석 결과는 `docs/perf-reports/{LABEL}/` 에 저장:
-- `profile-threads.txt` — BLOCKED/WAITING 스레드 즉시 확인
-- `profile-heap-histo.txt` — 클래스별 객체 수
-- `profile-cpu.jfr` — JMC / IntelliJ Profiler로 열어 플레임 그래프 확인
-- `profile-summary.md` — 요약 + 다음 액션
-
-REPORT.md 전체 판정도 자동으로 FAIL로 설정.
 
 ## Step 8: REPORT.md 생성
 
@@ -265,8 +225,8 @@ PASS / FAIL  — 근거: [구체적 수치]
 
 | 파일/스킬 | 역할 |
 |---|---|
-| `harness/coupon-event-domain.md` | **SSOT** — HC, SLO, 시나리오, 이상패턴 |
+| `domain/coupon-event-domain.md` | **SSOT** — HC, SLO, 시나리오, 이상패턴 |
 | `perf-test/verify-hc.sh` | HC-01~06 자동 SQL 검증 |
-| `perf-test/capture-metrics.sh` | Prometheus+Grafana 캡처 |
+| `perf-test/metrics-capture.sh` | Prometheus+Grafana 캡처 |
 | `perf-bench` 스킬 | 단일 라운드 전체 사이클 (이 스킬의 하위 레이어) |
 | `perf-tuning-cycle` 스킬 | 변경 적용 후 반복 사이클 |

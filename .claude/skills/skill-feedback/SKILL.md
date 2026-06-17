@@ -1,13 +1,44 @@
 ---
 name: skill-feedback
-description: 스킬로 작성한 산출물에 대한 피드백을 원본 스킬에 반영한다. Use when user says "스킬에 반영", "skill-feedback", "/skill-feedback", "스킬 피드백", "이거 스킬에도 적용해줘", or after applying feedback to a skill-generated output.
+description: 스킬로 작성한 산출물에 대한 피드백을 원본 스킬에 반영한다. **자동 트리거 포함**: 세션 중 스킬 관련 버그·패턴 발견 시 사용자 요청 없이도 능동적으로 스킬을 업데이트한다. Use when user says "스킬에 반영", "skill-feedback", "/skill-feedback", "스킬 피드백", "이거 스킬에도 적용해줘", or after applying feedback to a skill-generated output.
 ---
 
 # Skill Feedback Loop
 
 스킬이 만든 산출물(ADR, 코드, 문서 등)에 대한 피드백을 받았을 때, 일반화 가능한 부분을 원본 스킬에 반영하는 워크플로우.
 
-## 트리거 조건
+---
+
+## 자동 트리거 — 사용자가 묻지 않아도 능동적으로 발동
+
+다음 중 하나가 발생하면, 사용자가 "스킬에 반영해줘"라고 말하지 않아도 스킬을 업데이트한다.
+
+### 1. 버그 발견 + 수정
+세션 중 스킬에 문서화된 패턴/스크립트/명령에서 버그가 발견되고 수정됐다면:
+- 수정된 패턴을 스킬에 즉시 반영
+- 스킬에 `## ⚠️ 알려진 버그 & 필수 패치` 섹션이 없으면 추가
+
+예시:
+- k6 `res.status===200` 발급 집계 버그 발견 → `perf-bench`, `perf-test-reference` 업데이트
+- mysql snapshot pipe+heredoc 충돌 발견 → `perf-bench` 업데이트
+- MongoDB 어댑터 공정성 문제 발견 → `perf-bench` 업데이트
+
+### 2. 스킬 명세와 현실 불일치
+스킬에 명시된 경로/프로파일/명령이 코드베이스 실제와 다를 때:
+- 스킬 명세를 현실에 맞게 수정
+
+예시: 멀티모듈 전환으로 JAR 경로 변경 → `perf-bench` Step 2 경로 수정
+
+### 3. 중요 학습 패턴 — 다음 세션에서 반드시 알아야 할 것
+세션 전반에 걸쳐 반복적으로 중요했던 패턴이 스킬에 없다면 추가:
+- "sold-out flag 유무가 모든 어댑터의 TPS 천장을 결정한다"
+- "bench-mongo-full vs bench-mongo 공정성 구분"
+
+**자동 트리거 판단 기준**: "다음 번에 같은 스킬을 쓰면 이 문제가 또 발생하는가?" → YES → 지금 반영
+
+---
+
+## 명시적 트리거 조건
 
 - 사용자가 명시적으로 "스킬에 반영", "/skill-feedback" 등 요청
 - 스킬 산출물에 피드백을 적용한 뒤, 사용자가 "이거 스킬에도 적용해줘" 요청

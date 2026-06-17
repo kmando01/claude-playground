@@ -71,22 +71,6 @@ Accepted
 **REQUIRED SUB-SKILL:** Use superpowers:verification-before-completion
 **REQUIRED SUB-SKILL:** Use superpowers:finishing-a-development-branch
 
-#### 외부 실행 가능성 체크리스트 (push/제출 전 필수)
-
-`git status --short`로 untracked 파일 확인 후 아래를 점검한다.
-
-```
-□ gradlew / gradlew.bat 커밋됐는가?
-  → 없으면 README의 ./gradlew 명령이 fresh clone에서 즉시 실패
-□ docker-compose.yml의 모든 volumes 경로가 커밋됐는가?
-  → grep "volumes:" docker-compose.yml 으로 마운트 대상 추출 후 git ls-files로 확인
-□ README에 언급한 파일/디렉토리가 실제 repo에 존재하는가?
-  → docs/ 링크, config 파일, 스크립트 등
-□ fresh clone 관점으로 README 명령을 위에서부터 한 줄씩 따라갔을 때 막히는 곳이 없는가?
-```
-
-위반 시: `git add <누락 파일>` → `git commit --amend --no-edit` 또는 별도 커밋.
-
 ## Quick Reference
 
 ```

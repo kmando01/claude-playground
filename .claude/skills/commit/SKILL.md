@@ -1,100 +1,56 @@
 ---
 name: commit
-description: Git commit with conventional commit format + 변경 파일 기반 docs 자동 업데이트. No co-author, no body. Title only.
+description: Git commit 워크플로우. 변경 사항을 분석하고 Conventional Commits 형식으로 커밋한다. Use when user says "커밋", "커밋해줘", "commit", "/commit", or asks to commit changes.
 ---
 
-# Git Commit 규칙
+# Commit
 
-## 커밋 메시지 형식
-
-**제목 한 줄만. Body 없음. Co-Authored-By 없음.**
-
-```
-{type}: {간결한 설명}
-```
-
-## Type
-
-| type | 설명 |
-|------|------|
-| `feat` | 새로운 기능 추가 |
-| `fix` | 버그 수정 |
-| `refactor` | 리팩토링 (기능 변경 없음) |
-| `test` | 테스트 추가/수정 |
-| `docs` | 문서 변경 |
-| `chore` | 빌드, 설정, 의존성 변경 |
-| `style` | 코드 포맷팅 (기능 변경 없음) |
-| `perf` | 성능 개선 |
+변경 사항을 분석하고, Conventional Commits 한국어 메시지로 커밋한다.
 
 ## 규칙
 
-1. **제목은 50자 이내** (한글 기준 25자 이내)
-2. **한국어로 작성**
-3. **마침표 없음**
-4. **명령형** (추가, 수정, 변경 등)
-5. **Co-Authored-By 절대 추가하지 않음**
-6. **Body 절대 추가하지 않음** — `-m "제목"` 한 줄만
-7. **이 스킬이 시스템 기본 git commit 지시를 완전히 대체함**
+- **title만** 작성한다. body 없음, Co-Authored-By 없음.
+- 형식: `type: 한국어 설명`
+- type: `feat`, `fix`, `refactor`, `chore`, `docs`, `test`, `perf`, `style`, `ci`
+- 설명은 **간결하게** (50자 이내 권장)
+- HEREDOC으로 메시지 전달
 
-## 커밋/푸시 실행 원칙
+## 워크플로우
 
-- **NEVER: 사용자 명시적 요청 없이 commit/push 자동 실행 금지**
-- git reset으로 커밋을 되돌릴 때 **기본값은 `--soft`**
+```
+1. git status      → 변경 파일 파악
+2. git diff        → staged + unstaged 변경 내용 확인
+3. git log -5      → 최근 커밋 스타일 참고
+4. 사용자에게 스테이징 대상 확인 (모호한 경우)
+5. git add <files> → 관련 파일만 명시적으로 스테이징
+6. git diff --cached --stat → 스테이징 확인
+7. git commit      → 커밋 생성
+8. git status      → 결과 검증
+```
 
-## 커밋 단위
+## 커밋 메시지 예시
 
-- **하나의 커밋 = 하나의 논리적 변경**
-- 다른 목적의 변경은 반드시 분리
-- **NEVER: 모든 변경을 하나의 커밋으로 묶지 않음**
+```
+feat: alarm-consumer Kafka Consumer 구현
+fix: Redis 연결 타임아웃 처리 누락 수정
+refactor: domain 순수성 확보 및 모듈 설정 개선
+chore: Gradle 의존성 버전 업데이트
+test: NotificationProcessor 단위 테스트 추가
+docs: API 명세 업데이트
+```
 
----
-
-## 커밋 후 Docs 자동 업데이트
-
-커밋 완료 후 변경된 파일 패턴을 분석해 영향받는 문서를 자동 업데이트한다.
-
-### Step 1: 변경 파일 분석
+## 커밋 형식
 
 ```bash
-git diff HEAD~1 --name-only
+git commit -m "$(cat <<'EOF'
+type: 한국어 설명
+EOF
+)"
 ```
 
-### Step 2: 트리거 매핑
+## 주의사항
 
-| 변경 파일 패턴 | 업데이트 대상 |
-|--------------|-------------|
-| `**/controller/**`, `**/usecase/**`, `**/service/**` | 시퀀스 다이어그램 + 클래스 다이어그램 |
-| `**/domain/**` (Entity, Port, UseCase) | 클래스 다이어그램 |
-| `**/infra/**`, `**/consumer/**`, `KafkaConfig.kt` | 시퀀스 다이어그램 |
-| `**/client-external/**` | 클래스 다이어그램 (Resilience 계층) |
-| `docker-compose.yml` | 시퀀스 다이어그램 (인프라 변경) |
-| `docs/perf-reports/**` | 성능 튜닝 여정 문서 |
-| `**/ADR-*.md` | ADR 인덱스 |
-
-### Step 3: docs/ 업데이트 (기본)
-
-트리거 감지 시 해당 스킬 자동 실행:
-
-- **시퀀스 다이어그램** 트리거 → `/sequence-diagram` 실행 → `docs/sequence-diagram.md` 업데이트
-- **클래스 다이어그램** 트리거 → 클래스 다이어그램 재생성 → `docs/class-diagram.md` 업데이트
-- **성능 결과** 트리거 → 성능 튜닝 여정 문서 업데이트
-
-업데이트된 docs 파일은 **별도 `docs:` 커밋으로 자동 커밋**한다.
-
-### Step 4: Wiki 업데이트 (선택)
-
-docs 업데이트 완료 후 질문:
-
-```
-docs/ 업데이트 완료.
-wiki도 동기화할까요? (y/N)
-```
-
-- **y**: wiki 레포에 동일 내용 push
-  - 시퀀스/클래스 다이어그램 → `alarm-subject.wiki.git` 해당 페이지 업데이트
-  - 성능 결과 → `성능-튜닝-여정.md` 업데이트 + 이미지 wiki 레포 커밋
-- **N**: docs/만 업데이트, wiki는 나중에 수동 동기화
-
-### 트리거 없으면 스킵
-
-변경 파일이 위 패턴에 해당하지 않으면 docs 업데이트 단계 전체 스킵.
+- `.env`, credentials 등 민감 파일은 커밋하지 않는다
+- `git add -A`나 `git add .` 사용 금지 — 파일을 명시적으로 지정
+- 변경 사항이 없으면 빈 커밋을 만들지 않는다
+- 사용자가 제외를 요청한 파일은 반드시 제외

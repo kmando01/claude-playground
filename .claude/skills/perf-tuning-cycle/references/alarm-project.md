@@ -7,7 +7,7 @@
 ./perf-test/start-all.sh
 
 # DB TRUNCATE + Redis FLUSH
-./perf-test/reset-test-data.sh
+./perf-test/setup-reset-data.sh
 
 # 클린 상태 검증
 docker exec alarm-mysql mysql -uroot -proot alarm_db \
@@ -145,10 +145,10 @@ print('prometheus-metrics.txt 저장 완료')
 
 ```bash
 # 1단계: 표준 smoke (50 TPS × 3min)
-docker compose --profile test run --rm k6 run /scripts/smoke.js
+docker compose --profile test run --rm k6 run /scripts/k6-smoke.js
 
 # 2단계: 중간 부하 웜업 (100 TPS × 2min) — 재시작 시에만
-# load.js에서 stages를 임시 수정하거나, 별도 스크립트 사용
+# k6-load.js에서 stages를 임시 수정하거나, 별도 스크립트 사용
 # 목표: JIT 컴파일 완료 + HikariCP 커넥션 안정화
 ```
 
@@ -164,5 +164,5 @@ mkdir -p perf-test/scripts/results/{round-label}
 docker compose --profile test run --rm k6 run \
   --out experimental-prometheus-rw \
   --summary-export=/scripts/results/{round-label}/k6-summary.json \
-  /scripts/load.js
+  /scripts/k6-load.js
 ```
