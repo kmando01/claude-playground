@@ -1,0 +1,12 @@
+/Users/mando/Library/Python/3.9/lib/python/site-packages/urllib3/__init__.py:35: NotOpenSSLWarning: urllib3 v2 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'LibreSSL 2.8.3'. See: https://github.com/urllib3/urllib3/issues/3020
+  warnings.warn(
+[E] Start. max_poll_interval_ms=15000ms → 429 시 20초 sleep으로 rebalance 유발
+[E] REVOKE partitions=[]
+[E] REBALANCE #1 assigned=["TopicPartition(topic='external-api-calls', partition=3)", "TopicPartition(topic='external-api-calls', partition=0)", "TopicPartition(topic='external-api-calls', partition=1)", "TopicPartition(topic='external-api-calls', partition=2)"]
+[E] 429 받음. poll() 없이 20s sleep → rebalance 예상
+[E] sleep 종료. rebalances_so_far=1
+[E] REVOKE partitions=["TopicPartition(topic='external-api-calls', partition=3)", "TopicPartition(topic='external-api-calls', partition=0)", "TopicPartition(topic='external-api-calls', partition=1)", "TopicPartition(topic='external-api-calls', partition=2)"]
+[E] REBALANCE #2 assigned=["TopicPartition(topic='external-api-calls', partition=3)", "TopicPartition(topic='external-api-calls', partition=0)", "TopicPartition(topic='external-api-calls', partition=1)", "TopicPartition(topic='external-api-calls', partition=2)"]
+[E] rebalance 2회 확인 → 실험 종료
+[E] DONE processed=150 rate_limited=1 rebalances=2
+[E] REVOKE partitions=["TopicPartition(topic='external-api-calls', partition=3)", "TopicPartition(topic='external-api-calls', partition=0)", "TopicPartition(topic='external-api-calls', partition=1)", "TopicPartition(topic='external-api-calls', partition=2)"]

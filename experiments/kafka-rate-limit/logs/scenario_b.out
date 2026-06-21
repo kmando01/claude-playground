@@ -1,0 +1,8 @@
+/Users/mando/Library/Python/3.9/lib/python/site-packages/urllib3/__init__.py:35: NotOpenSSLWarning: urllib3 v2 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'LibreSSL 2.8.3'. See: https://github.com/urllib3/urllib3/issues/3020
+  warnings.warn(
+[B] Start. concurrent_batch=30
+[B] processed=3000 total_429=4790 rate_429=61.5% max_retries=12 elapsed=34s
+[B] processed=6000 total_429=8846 rate_429=59.6% max_retries=12 elapsed=65s
+[B] processed=9000 total_429=12983 rate_429=59.1% max_retries=12 elapsed=96s
+[B] processed=10000 total_429=14301 rate_429=58.8% max_retries=12 elapsed=106s
+[B] DONE processed=10000 total_429=14301 rate_429=58.8% max_retries_per_msg=12 elapsed=106s
