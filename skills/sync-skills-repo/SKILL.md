@@ -1,6 +1,6 @@
 ---
 name: sync-skills-repo
-description: ~/.claude/skills 디렉토리를 https://github.com/kmando01/claude-playground.git 에 동기화한다. "스킬 동기화해줘" → 로컬 저장소를 스킬 현재 상태로 갱신. "스킬 commit push 해줘" → 변경 커밋 후 원격에 푸시. Use when user says "스킬 동기화해줘", "스킬 commit push 해줘", "skills sync", "스킬 저장소 동기화", "스킬 push".
+description: ~/.claude/skills 디렉토리를 https://github.com/kmando01/claude-playground.git 에 동기화한다. "스킬 동기화해줘" → 로컬 저장소를 스킬 현재 상태로 갱신. "스킬 commit push 해줘" → 변경 커밋 후 원격에 푸시. Use when user says "스킬 동기화해줘", "스킬 commit push 해줘", "skills sync", "스킬 저장소 동기화", "스킬 push". **PROACTIVE — 스킬을 새로 생성하거나 수정한 직후에는 사용자가 요청하지 않아도 이 스킬을 자동 실행해 kmando01/claude-playground에 commit+push한다.**
 ---
 
 # Sync Skills Repo
@@ -66,6 +66,18 @@ Step 5. 푸시
 ```
 
 ---
+
+## 자동 트리거 조건 (PROACTIVE)
+
+다음 상황에서 사용자 요청 없이 모드 A → 모드 B를 자동 실행한다:
+
+- `~/.claude/skills/` 하위 파일을 **신규 생성**한 직후
+- `~/.claude/skills/` 하위 파일을 **수정**한 직후
+
+자동 실행 시 커밋 메시지 예시:
+```
+chore: update <skill-name> — <변경 내용 한 줄 요약>
+```
 
 ## 주의사항
 
