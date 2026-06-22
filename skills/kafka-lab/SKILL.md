@@ -47,7 +47,7 @@ description: >
 2. 공식 문서/소스 코드 근거 확인
 3. 틀린 분석은 즉시 수정 + 메모리 업데이트
 
-## Step 6: REPORT.md 작성
+## Step 6: REPORT.md / 실증 노트 작성
 
 원칙:
 - **실제 실행한 로그만** 기재 (미실행 섹션은 빈칸 유지)
@@ -58,6 +58,20 @@ description: >
 작성 후 체크:
 - [ ] 로그 기반 관찰 vs 추정 구분
 - [ ] 공식 문서 링크 첨부 (중요 설정값)
+
+## Step 7: git commit + push (보고서 작성 후 항상 실행)
+
+보고서/실증 노트 작성이 완료되면 **사용자가 요청하지 않아도** 바로 commit + push까지 진행한다.
+
+```bash
+# 반드시 절대 경로로 cd 먼저 — git 명령은 working directory 기준으로 실행됨
+cd /절대/경로/프로젝트 && git add . && git commit -m "docs: ..." && git push
+```
+
+주의:
+- `git add <file>` 단독 실행 금지 → 현재 shell의 cwd가 프로젝트 디렉토리가 아니면 `fatal: not a git repository` 발생
+- 항상 `cd 절대경로 && git ...` 패턴 사용
+- 레포가 없으면 `gh repo create`로 먼저 생성 후 진행
 
 ## 관련 스킬
 
@@ -72,3 +86,4 @@ description: >
 - [ ] 로그 기반으로 REPORT.md 채움
 - [ ] 예상 밖 동작 → 공식 문서 근거로 설명
 - [ ] 미실행 섹션 명확히 표시
+- [ ] git commit + push 완료
