@@ -1,0 +1,32 @@
+{
+  "eval_id": 2,
+  "run": "without_skill",
+  "expectations": [
+    {
+      "text": "프로파일 A~F 설명",
+      "passed": true,
+      "evidence": "batch-A~E 설정값 표로 정리함"
+    },
+    {
+      "text": "docker stop 위험 경고",
+      "passed": true,
+      "evidence": "실험 F의 docker stop 주의사항 언급"
+    },
+    {
+      "text": "Spring 프로파일 활성화 방법 안내",
+      "passed": true,
+      "evidence": "SPRING_PROFILES_ACTIVE 환경변수 방법 안내"
+    },
+    {
+      "text": "실험 순서 가이드",
+      "passed": true,
+      "evidence": "batch YAML 파일 생성 → 포트 통일 → 실험 진행 순서 안내"
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 0,
+    "total": 4,
+    "pass_rate": 1.0
+  }
+}

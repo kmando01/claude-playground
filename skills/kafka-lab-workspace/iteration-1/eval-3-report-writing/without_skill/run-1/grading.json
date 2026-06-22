@@ -1,0 +1,32 @@
+{
+  "eval_id": 3,
+  "run": "without_skill",
+  "expectations": [
+    {
+      "text": "REPORT.md 파일 생성",
+      "passed": true,
+      "evidence": "outputs/REPORT.md 파일 존재 확인"
+    },
+    {
+      "text": "NOT_ENOUGH_REPLICAS 에러 기록",
+      "passed": true,
+      "evidence": "REPORT.md에 NOT_ENOUGH_REPLICAS 포함"
+    },
+    {
+      "text": "미실행 섹션 빈칸 유지",
+      "passed": false,
+      "evidence": "'실험 2와 실험 4의 수치(응답 시간, offset)는 실제 로그가 없어 일반적인 패턴 기반 예시로 작성' - 실행하지 않은 섹션을 추정값으로 채움"
+    },
+    {
+      "text": "자동 재전송 동작 기록",
+      "passed": true,
+      "evidence": "브로커 복구 후 retries=MAX_INT로 자동 재전송 성공 기록"
+    }
+  ],
+  "summary": {
+    "passed": 3,
+    "failed": 1,
+    "total": 4,
+    "pass_rate": 0.75
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "eval_id": 2,
+  "run": "with_skill",
+  "expectations": [
+    {
+      "text": "프로파일 A~F 설명",
+      "passed": true,
+      "evidence": "batch-A~E 각 프로파일의 batch.size, linger.ms, compression 설정값 표로 정리"
+    },
+    {
+      "text": "docker stop 위험 경고",
+      "passed": true,
+      "evidence": "실험 F의 docker stop kafka-1 주의사항 및 복구 명령 docker start 확인 언급"
+    },
+    {
+      "text": "Spring 프로파일 활성화 방법 안내",
+      "passed": true,
+      "evidence": "SPRING_PROFILES_ACTIVE=batch-A ./gradlew bootRun 방식 안내"
+    },
+    {
+      "text": "실험 순서 가이드",
+      "passed": true,
+      "evidence": "batch YAML 파일 먼저 생성 → 포트 수정 → 프로파일 순서대로 실행 가이드 제공"
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 0,
+    "total": 4,
+    "pass_rate": 1.0
+  }
+}

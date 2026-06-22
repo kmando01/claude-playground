@@ -1,0 +1,11 @@
+{
+  "eval_id": 1,
+  "eval_name": "log-interpretation",
+  "prompt": "lab2-3 실험하다가 이런 로그가 나왔어. `[Producer clientId=producer-1] Got error produce response with correlation id 5 on topic-partition lab2-acks-0, retrying (2147483646 attempts left). Error: NOT_ENOUGH_REPLICAS` 이게 무슨 의미야?",
+  "assertions": [
+    {"name": "min.insync.replicas 원인 설명", "description": "NOT_ENOUGH_REPLICAS 에러가 min.insync.replicas 설정 때문임을 명시했는가"},
+    {"name": "재시도 횟수 의미 설명", "description": "2147483646이 Integer.MAX_VALUE - 1이며 사실상 무한 재시도임을 설명했는가"},
+    {"name": "ISR 상태 연관성 설명", "description": "현재 ISR 수가 min.insync.replicas 요건을 충족하지 못함을 설명했는가"},
+    {"name": "복구 방법 안내", "description": "broker 재기동 또는 ISR 복구 방법을 언급했는가"}
+  ]
+}

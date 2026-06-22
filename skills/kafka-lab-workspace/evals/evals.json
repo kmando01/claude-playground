@@ -1,0 +1,89 @@
+{
+  "skill_name": "kafka-lab",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "lab2-3 실험하다가 이런 로그가 나왔어. `[Producer clientId=producer-1] Got error produce response with correlation id 5 on topic-partition lab2-acks-0, retrying (2147483646 attempts left). Error: NOT_ENOUGH_REPLICAS` 이게 무슨 의미야?",
+      "expected_output": "NOT_ENOUGH_REPLICAS 에러의 원인(min.insync.replicas 설정), 재시도 횟수(2147483646 = Integer.MAX_VALUE - 1)의 의미, 현재 ISR 상태와의 관계, 복구 방법을 명확하게 설명",
+      "files": [],
+      "assertions": [
+        {
+          "name": "min.insync.replicas 원인 설명",
+          "description": "NOT_ENOUGH_REPLICAS 에러가 min.insync.replicas 설정 때문임을 명시했는가",
+          "type": "contains_concept"
+        },
+        {
+          "name": "재시도 횟수 의미 설명",
+          "description": "2147483646이 Integer.MAX_VALUE - 1이며 사실상 무한 재시도임을 설명했는가",
+          "type": "contains_concept"
+        },
+        {
+          "name": "ISR 상태 연관성 설명",
+          "description": "현재 ISR 수가 min.insync.replicas 요건을 충족하지 못함을 설명했는가",
+          "type": "contains_concept"
+        },
+        {
+          "name": "복구 방법 안내",
+          "description": "broker 재기동 또는 ISR 복구 방법을 언급했는가",
+          "type": "contains_concept"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "lab2-4 실험 시작하려는데 commands.sh 확인해줘",
+      "expected_output": "lab2-4/commands.sh를 읽고 각 프로파일(A~F)의 설정값과 목적을 설명, Spring 프로파일 존재 여부 확인, 실험 순서 안내, 주의사항(예: docker stop 명령어) 경고",
+      "files": ["/Users/mando/IdeaProjects/kafka-labs/labs/lab2/lab2-4/commands.sh"],
+      "assertions": [
+        {
+          "name": "프로파일 A~F 설명",
+          "description": "각 Spring 프로파일(batch-A, batch-B 등)의 설정값(batch.size, linger.ms 등)을 설명했는가",
+          "type": "contains_concept"
+        },
+        {
+          "name": "docker stop 위험 경고",
+          "description": "commands.sh 내 docker stop kafka-1 명령어의 위험성 또는 주의사항을 경고했는가",
+          "type": "contains_concept"
+        },
+        {
+          "name": "Spring 프로파일 활성화 방법 안내",
+          "description": "SPRING_PROFILES_ACTIVE 환경변수 설정 방법을 안내했는가",
+          "type": "contains_concept"
+        },
+        {
+          "name": "실험 순서 가이드",
+          "description": "어떤 프로파일을 먼저 실행해야 하는지 순서 가이드를 제공했는가",
+          "type": "contains_concept"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "lab2-3 실험 끝났어. acks=all 설정에서 broker 1개 죽였더니 `NOT_ENOUGH_REPLICAS` 에러 났고, broker 살리니까 자동 재전송됐어. REPORT.md 채워줘",
+      "expected_output": "실제 로그 기반으로 REPORT.md의 해당 섹션 작성, 미실행 섹션은 빈칸 유지, 관찰(로그 근거)과 추정 구분, 핵심 설정값에 공식 문서 링크 포함",
+      "files": ["/Users/mando/IdeaProjects/kafka-labs/labs/lab2/lab2-3/REPORT.md"],
+      "assertions": [
+        {
+          "name": "REPORT.md 파일 생성",
+          "description": "outputs 디렉토리에 REPORT.md 파일이 존재하는가",
+          "type": "file_exists"
+        },
+        {
+          "name": "NOT_ENOUGH_REPLICAS 에러 기록",
+          "description": "REPORT.md에 NOT_ENOUGH_REPLICAS 에러가 포함됐는가",
+          "type": "contains_text"
+        },
+        {
+          "name": "미실행 섹션 빈칸 유지",
+          "description": "사용자가 제공하지 않은 실험 결과를 추정으로 채우지 않고 빈칸으로 유지했는가",
+          "type": "contains_concept"
+        },
+        {
+          "name": "자동 재전송 동작 기록",
+          "description": "broker 재기동 후 자동 재전송(retry) 성공 동작을 기록했는가",
+          "type": "contains_concept"
+        }
+      ]
+    }
+  ]
+}

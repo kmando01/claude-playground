@@ -1,0 +1,32 @@
+{
+  "eval_id": 3,
+  "run": "with_skill",
+  "expectations": [
+    {
+      "text": "REPORT.md 파일 생성",
+      "passed": true,
+      "evidence": "outputs/REPORT.md 파일 존재 확인"
+    },
+    {
+      "text": "NOT_ENOUGH_REPLICAS 에러 기록",
+      "passed": true,
+      "evidence": "REPORT.md에 NOT_ENOUGH_REPLICAS 에러 및 errorCode=19 포함"
+    },
+    {
+      "text": "미실행 섹션 빈칸 유지",
+      "passed": true,
+      "evidence": "'실험 2와 실험 4... 빈칸 그대로 유지 (SKILL.md 원칙: 실제 실행한 로그만 기재)' 명시"
+    },
+    {
+      "text": "자동 재전송 동작 기록",
+      "passed": true,
+      "evidence": "broker 복구 후 ISR 회복 → 대기 중인 배치 자동 전송 메커니즘 기록"
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 0,
+    "total": 4,
+    "pass_rate": 1.0
+  }
+}

@@ -48,6 +48,8 @@ description: >
 - **측정 대상**: 어떤 지표가 움직이면 증명인가?
 - **영향 범위**: 직접 영향(hot 리소스 자체)과 간접 영향(무관한 다른 작업) 모두 검증할 것인가?
 - **운영 리스크**: 성능이 아닌 장애·복구·관찰가능성 관련 가설도 있는가?
+- **중간 경로 열거**: A vs C를 비교할 때 B(중간 경로)를 빠뜨리지 않았는가? 가능한 모든 변형을 스텝으로 나열한 뒤 통제 변수화할 것. (예: EVAL vs FCALL → 반드시 EVALSHA를 중간에 넣어야 원인 분리 가능)
+- **SDK 내부 동작 확인**: 사용하는 클라이언트 라이브러리가 내부적으로 어떤 커맨드를 실제로 전송하는가? 추상화 헬퍼가 내부에서 다른 API로 fallback/cache/retry하는지 소스 또는 MONITOR로 확인할 것.
 
 ---
 
@@ -136,14 +138,20 @@ Variant (Treatment): 총 N ops, 구현 B (예: Lua GET+INCR)
 공통 구조:
 ```
 1. setup()           → 초기화 (drop/create)
-2. snapshot_before() → 서버 메트릭 캡처
-3. monitor()         → peak 추적 goroutine
-4. run_workers()     → 실제 부하
-5. snapshot_after()  → delta 계산
-6. percentiles()     → p50/p95/p99/max
-7. save_json()
-8. verify_integrity() → completed_ops == 실제_레코드_수
+2. warmup()          → ★ 워밍업 필수: min(total_ops×0.1, 5000) ops 실행
+                        (JIT 컴파일, 커넥션 풀 포화, SDK 캐시 프라이밍 완료)
+                        워밍업 결과는 측정에서 완전 분리
+3. snapshot_before() → 서버 메트릭 캡처
+4. monitor()         → peak 추적 goroutine
+5. run_workers()     → 실제 부하
+6. snapshot_after()  → delta 계산
+7. percentiles()     → p50/p95/p99/max
+8. save_json()
+9. verify_integrity() → completed_ops == 실제_레코드_수
 ```
+
+> **워밍업 규모 기준**: workers × 5 이상이어야 모든 worker가 최소 1회 이상 steady-state를 경험한다.
+> workers=1000이면 warmup ≥ 5000 ops.
 
 ---
 
@@ -283,6 +291,50 @@ docker logs container | grep "DEBUG:" | wc -l
 
 ---
 
+## Step 7: 보고서 교차 검증 (필수 — 생략 금지) ★
+
+> **작성자는 각 섹션을 독립적으로 작성해 교차 검증 맹점이 생긴다.**
+> 이 Step은 독립 리뷰어 관점에서 보고서 전체를 재검토해 수치 불일치·누락·과장을 찾는다.
+> 실제로 이 단계 없이 작성된 실증 노트 7개에서 7건의 오류가 발견됐다.
+
+### 실행 방법
+
+Step 6 보고서 작성 완료 직후 `report-reviewer` 에이전트를 호출한다:
+
+```
+Agent(subagent_type="report-reviewer", prompt="<보고서 파일 경로 목록>")
+```
+
+또는 직접 아래 체크리스트를 수동으로 실행:
+
+### 교차 검증 체크리스트
+
+**수치 일관성:**
+- [ ] 표의 수치가 본문 설명과 일치하는가?
+- [ ] 같은 지표가 파일 내 여러 곳에 등장할 때 모두 동일한가?
+- [ ] 단위가 혼용되지 않았는가? (KB/MB, ms/s, p50/평균 혼동)
+- [ ] 이론값 vs 실측값 비교가 같은 조건을 가정하는가?
+
+**실측 증거:**
+- [ ] 실측 원본 출력(터미널 로그)이 포함됐는가?
+- [ ] 출력의 수치와 분석 표의 수치가 일치하는가?
+- [ ] 재현 명령(실행 커맨드)이 포함됐는가?
+
+**결론의 강도:**
+- [ ] 단일 측정값으로 방향 결론을 내리지 않았는가? (≥3회 반복 또는 노이즈 주석 필요)
+- [ ] 다른 섹션의 결론과 충돌하는 결론이 없는가?
+- [ ] "X가 더 빠르다"는 결론에 오차 범위 또는 반복 측정 근거가 있는가?
+
+**누락 확인:**
+- [ ] 가설 H-1, H-2, ... 각각의 검증 결과가 명시됐는가?
+- [ ] 가설과 반대로 나온 결과가 있으면 "수정된 결론"으로 명시됐는가?
+
+**이전 문서와의 정합성:**
+- [ ] 이전 실험 보고서와 이번 보고서가 같은 지표를 다른 값으로 표기하지 않는가?
+- [ ] 업데이트된 결론이 다른 문서(종합 평가 시트 등)에 반영됐는가?
+
+---
+
 ## 자주 발생하는 함정
 
 ### 1. 도구 GIL/동시성 제한 → false negative
@@ -314,3 +366,55 @@ docker logs container | grep "DEBUG:" | wc -l
 증상: "평균은 괜찮아 보임"
 진단: p99/max가 평균의 수백 배
 대응: 항상 p99, max를 함께 보고 "평균은 정상이지만 max가 2000ms"를 명시
+
+### 9. 워밍업 미분리 → cold-start noise가 측정값을 오염 ★ (신규)
+증상: 같은 설정으로 두 번 실행하면 결과가 크게 다름. 첫 번째 실행이 항상 느림.
+     또는: 한 variant가 "이상하게 느린데" 이유를 모름.
+진단:
+  - workers별 첫 ops의 latency가 이후 ops보다 수 배 높음
+  - go-redis Script.Run() 첫 호출은 NOSCRIPT → EVAL fallback 발생 (이후는 EVALSHA)
+  - JVM이라면 JIT 컴파일 전·후 성능이 다름
+  - 커넥션 풀이 채워지기 전 첫 N ops는 커넥션 생성 비용 포함
+대응:
+  1. 측정 전 반드시 warmup phase 분리 실행 (workers × 5 이상의 ops)
+  2. 워밍업과 측정 결과를 별도 키·별도 카운터로 격리
+  3. "SDK가 내부적으로 무엇을 캐싱하는가"를 먼저 파악 (→ 함정 10)
+실측 사례: go-redis Script.Run() warmup 없이 workers=1000 실행 시
+  Lua: 26,354 ops/s → warmup 분리 후 EVAL: 52,822 / EVALSHA: 71,962
+  (워밍업 미분리로 측정값이 2배 낮게 나옴)
+
+### 10. SDK 내부 동작 미파악 → "동일 조건"이 실제로는 다른 조건 ★ (신규)
+증상: "A 방식으로 테스트했다"고 믿지만 SDK 헬퍼가 내부적으로 B로 동작.
+     비교 결과가 "의도한 변수의 차이"가 아닌 "SDK 구현의 차이"를 측정.
+진단:
+  - Redis MONITOR로 실제 전송 커맨드 확인
+  - INFO stats의 net_in_bytes delta / ops 로 페이로드 크기 교차 검증
+  - 클라이언트 라이브러리 소스/문서에서 내부 fallback·retry·caching 로직 확인
+대응:
+  1. 헬퍼 API 대신 **명시적 저수준 API** 사용
+     (go-redis: Script.Run() → rdb.Eval() / rdb.EvalSha() 직접 호출)
+  2. 실험 전 "이 API가 실제로 어떤 커맨드를 보내는가"를 MONITOR로 1회 검증
+  3. net_in bytes/op을 항상 측정해 의도한 페이로드와 실측값이 일치하는지 확인
+
+SDK별 주요 함정:
+  | SDK/라이브러리 | 내부 동작 | 확인 방법 |
+  |---|---|---|
+  | go-redis Script.Run() | 첫 호출: EVALSHA 시도 → NOSCRIPT 시 EVAL fallback. 이후 EVALSHA | MONITOR 또는 net_in bytes/op |
+  | Spring Data Redis RedisScript | 동일: EVALSHA → EVAL fallback | |
+  | Jedis evalsha() | NOSCRIPT 시 예외 throw (fallback 없음) | |
+  | node-redis eval() | 항상 EVAL (캐싱 없음) | |
+
+### 11. 중간 경로 생략 → 원인 분리 실패, 잘못된 인과 결론 ★ (신규)
+증상: "A가 C보다 X% 빠르다"고 결론냈지만 원인이 여러 개 섞여 있음.
+     구현 A와 C 사이에 B(중간 경로)가 존재했는데 비교에서 누락.
+진단:
+  - 비교 대상 두 구현 사이에 "한 가지만 다른" 중간 단계가 더 있지 않은가?
+  - 속도 차이의 원인을 "무엇이 달라서"로 명확히 설명할 수 없으면 중간 경로 누락 의심
+대응:
+  비교 대상 간 모든 차이 요인을 나열 → 각 요인을 한 번에 하나씩 바꾸는 ladder 설계
+  예:
+    EVAL (스크립트 본문 전송) → EVALSHA (SHA만 전송) → FCALL (Functions)
+    A 혼자 빠름 ← 네트워크 페이로드 절감
+    B ≈ C      ← FCALL 자체 최적화 없음 (Functions 우위 = 운영성, TPS 아님)
+실측 사례: EVAL vs FCALL만 비교 시 "Functions 80% 우위" 결론 →
+  EVALSHA 추가 후 원인 분리 결과: 36%는 네트워크 페이로드, FCALL은 EVALSHA 대비 -3.5%

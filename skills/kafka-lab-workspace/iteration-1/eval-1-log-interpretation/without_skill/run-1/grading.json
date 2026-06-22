@@ -1,0 +1,32 @@
+{
+  "eval_id": 1,
+  "run": "without_skill",
+  "expectations": [
+    {
+      "text": "min.insync.replicas 원인 설명",
+      "passed": true,
+      "evidence": "min.insync.replicas 설정이 원인임을 설명함"
+    },
+    {
+      "text": "재시도 횟수 의미 설명",
+      "passed": true,
+      "evidence": "2147483646 = Integer.MAX_VALUE - 1, 무한 재시도 설명 포함"
+    },
+    {
+      "text": "ISR 상태 연관성 설명",
+      "passed": true,
+      "evidence": "ISR < min.insync.replicas 조건 설명, acks 설정별 표 포함"
+    },
+    {
+      "text": "복구 방법 안내",
+      "passed": false,
+      "evidence": "'브로커가 복구되면 자동으로 전송 성공' 언급은 있으나 구체적인 복구 명령어나 ISR 상태 확인 방법 없음"
+    }
+  ],
+  "summary": {
+    "passed": 3,
+    "failed": 1,
+    "total": 4,
+    "pass_rate": 0.75
+  }
+}

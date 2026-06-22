@@ -1,0 +1,11 @@
+{
+  "eval_id": 3,
+  "eval_name": "report-writing",
+  "prompt": "lab2-3 실험 끝났어. acks=all 설정에서 broker 1개 죽였더니 `NOT_ENOUGH_REPLICAS` 에러 났고, broker 살리니까 자동 재전송됐어. REPORT.md 채워줘",
+  "assertions": [
+    {"name": "REPORT.md 파일 생성", "description": "outputs 디렉토리에 REPORT.md 파일이 존재하는가"},
+    {"name": "NOT_ENOUGH_REPLICAS 에러 기록", "description": "REPORT.md에 NOT_ENOUGH_REPLICAS 에러가 포함됐는가"},
+    {"name": "미실행 섹션 빈칸 유지", "description": "사용자가 제공하지 않은 실험 결과를 추정으로 채우지 않고 빈칸으로 유지했는가"},
+    {"name": "자동 재전송 동작 기록", "description": "broker 재기동 후 자동 재전송 성공 동작을 기록했는가"}
+  ]
+}

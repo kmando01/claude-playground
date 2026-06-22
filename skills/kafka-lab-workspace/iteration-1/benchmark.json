@@ -1,0 +1,293 @@
+{
+  "metadata": {
+    "skill_name": "kafka-lab",
+    "skill_path": "<path/to/skill>",
+    "executor_model": "<model-name>",
+    "analyzer_model": "<model-name>",
+    "timestamp": "2026-03-10T01:41:14Z",
+    "evals_run": [
+      1,
+      2,
+      3
+    ],
+    "runs_per_configuration": 3
+  },
+  "runs": [
+    {
+      "eval_id": 1,
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 4,
+        "failed": 0,
+        "total": 4,
+        "time_seconds": 42.7,
+        "tokens": 25486,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "min.insync.replicas \uc6d0\uc778 \uc124\uba85",
+          "passed": true,
+          "evidence": "line 22-33: 'NOT_ENOUGH_REPLICAS (errorCode=19)\ub294 \ube0c\ub85c\ucee4\uac00 PRODUCE \uc694\uccad\uc744 \uac70\ubd80\ud558\uba70... ISR(In-Sync Replicas) \uc218 < min.insync.replicas \uc77c \ub54c' \uba85\ud655\ud788 \uc124\uba85"
+        },
+        {
+          "text": "\uc7ac\uc2dc\ub3c4 \ud69f\uc218 \uc758\ubbf8 \uc124\uba85",
+          "passed": true,
+          "evidence": "line 39-47: '2147483646 = Integer.MAX_VALUE - 1', delivery.timeout.ms=120s\uac00 \uc2e4\uc81c \uc911\ub2e8 \uc870\uac74\uc784\uc744 \uba85\uc2dc"
+        },
+        {
+          "text": "ISR \uc0c1\ud0dc \uc5f0\uad00\uc131 \uc124\uba85",
+          "passed": true,
+          "evidence": "line 30-33: lab2-3 \uc2e4\ud5d8 3-2 \uc2dc\ub098\ub9ac\uc624\uc640 \ub9e4\ud551\ud558\uc5ec ISR=1 < min.insync.replicas=2 \uc870\uac74 \uc124\uba85"
+        },
+        {
+          "text": "\ubcf5\uad6c \ubc29\ubc95 \uc548\ub0b4",
+          "passed": true,
+          "evidence": "line 68-78: kafka-topics.sh --describe \uba85\ub839\uc5b4\ub85c ISR \uc0c1\ud0dc \ud655\uc778, \ube0c\ub85c\ucee4 \uc7ac\uae30\ub3d9\uc73c\ub85c \ubcf5\uad6c\ud558\ub294 \uad6c\uccb4\uc801 \uba85\ub839\uc5b4 \uc81c\uc2dc"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 2,
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 4,
+        "failed": 0,
+        "total": 4,
+        "time_seconds": 74.6,
+        "tokens": 23802,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "\ud504\ub85c\ud30c\uc77c A~F \uc124\uba85",
+          "passed": true,
+          "evidence": "batch-A~E \uac01 \ud504\ub85c\ud30c\uc77c\uc758 batch.size, linger.ms, compression \uc124\uc815\uac12 \ud45c\ub85c \uc815\ub9ac"
+        },
+        {
+          "text": "docker stop \uc704\ud5d8 \uacbd\uace0",
+          "passed": true,
+          "evidence": "\uc2e4\ud5d8 F\uc758 docker stop kafka-1 \uc8fc\uc758\uc0ac\ud56d \ubc0f \ubcf5\uad6c \uba85\ub839 docker start \ud655\uc778 \uc5b8\uae09"
+        },
+        {
+          "text": "Spring \ud504\ub85c\ud30c\uc77c \ud65c\uc131\ud654 \ubc29\ubc95 \uc548\ub0b4",
+          "passed": true,
+          "evidence": "SPRING_PROFILES_ACTIVE=batch-A ./gradlew bootRun \ubc29\uc2dd \uc548\ub0b4"
+        },
+        {
+          "text": "\uc2e4\ud5d8 \uc21c\uc11c \uac00\uc774\ub4dc",
+          "passed": true,
+          "evidence": "batch YAML \ud30c\uc77c \uba3c\uc800 \uc0dd\uc131 \u2192 \ud3ec\ud2b8 \uc218\uc815 \u2192 \ud504\ub85c\ud30c\uc77c \uc21c\uc11c\ub300\ub85c \uc2e4\ud589 \uac00\uc774\ub4dc \uc81c\uacf5"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 3,
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 4,
+        "failed": 0,
+        "total": 4,
+        "time_seconds": 105.9,
+        "tokens": 26548,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "REPORT.md \ud30c\uc77c \uc0dd\uc131",
+          "passed": true,
+          "evidence": "outputs/REPORT.md \ud30c\uc77c \uc874\uc7ac \ud655\uc778"
+        },
+        {
+          "text": "NOT_ENOUGH_REPLICAS \uc5d0\ub7ec \uae30\ub85d",
+          "passed": true,
+          "evidence": "REPORT.md\uc5d0 NOT_ENOUGH_REPLICAS \uc5d0\ub7ec \ubc0f errorCode=19 \ud3ec\ud568"
+        },
+        {
+          "text": "\ubbf8\uc2e4\ud589 \uc139\uc158 \ube48\uce78 \uc720\uc9c0",
+          "passed": true,
+          "evidence": "'\uc2e4\ud5d8 2\uc640 \uc2e4\ud5d8 4... \ube48\uce78 \uadf8\ub300\ub85c \uc720\uc9c0 (SKILL.md \uc6d0\uce59: \uc2e4\uc81c \uc2e4\ud589\ud55c \ub85c\uadf8\ub9cc \uae30\uc7ac)' \uba85\uc2dc"
+        },
+        {
+          "text": "\uc790\ub3d9 \uc7ac\uc804\uc1a1 \ub3d9\uc791 \uae30\ub85d",
+          "passed": true,
+          "evidence": "broker \ubcf5\uad6c \ud6c4 ISR \ud68c\ubcf5 \u2192 \ub300\uae30 \uc911\uc778 \ubc30\uce58 \uc790\ub3d9 \uc804\uc1a1 \uba54\ucee4\ub2c8\uc998 \uae30\ub85d"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 1,
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.75,
+        "passed": 3,
+        "failed": 1,
+        "total": 4,
+        "time_seconds": 45.0,
+        "tokens": 13441,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "min.insync.replicas \uc6d0\uc778 \uc124\uba85",
+          "passed": true,
+          "evidence": "min.insync.replicas \uc124\uc815\uc774 \uc6d0\uc778\uc784\uc744 \uc124\uba85\ud568"
+        },
+        {
+          "text": "\uc7ac\uc2dc\ub3c4 \ud69f\uc218 \uc758\ubbf8 \uc124\uba85",
+          "passed": true,
+          "evidence": "2147483646 = Integer.MAX_VALUE - 1, \ubb34\ud55c \uc7ac\uc2dc\ub3c4 \uc124\uba85 \ud3ec\ud568"
+        },
+        {
+          "text": "ISR \uc0c1\ud0dc \uc5f0\uad00\uc131 \uc124\uba85",
+          "passed": true,
+          "evidence": "ISR < min.insync.replicas \uc870\uac74 \uc124\uba85, acks \uc124\uc815\ubcc4 \ud45c \ud3ec\ud568"
+        },
+        {
+          "text": "\ubcf5\uad6c \ubc29\ubc95 \uc548\ub0b4",
+          "passed": false,
+          "evidence": "'\ube0c\ub85c\ucee4\uac00 \ubcf5\uad6c\ub418\uba74 \uc790\ub3d9\uc73c\ub85c \uc804\uc1a1 \uc131\uacf5' \uc5b8\uae09\uc740 \uc788\uc73c\ub098 \uad6c\uccb4\uc801\uc778 \ubcf5\uad6c \uba85\ub839\uc5b4\ub098 ISR \uc0c1\ud0dc \ud655\uc778 \ubc29\ubc95 \uc5c6\uc74c"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 2,
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 4,
+        "failed": 0,
+        "total": 4,
+        "time_seconds": 65.3,
+        "tokens": 18486,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "\ud504\ub85c\ud30c\uc77c A~F \uc124\uba85",
+          "passed": true,
+          "evidence": "batch-A~E \uc124\uc815\uac12 \ud45c\ub85c \uc815\ub9ac\ud568"
+        },
+        {
+          "text": "docker stop \uc704\ud5d8 \uacbd\uace0",
+          "passed": true,
+          "evidence": "\uc2e4\ud5d8 F\uc758 docker stop \uc8fc\uc758\uc0ac\ud56d \uc5b8\uae09"
+        },
+        {
+          "text": "Spring \ud504\ub85c\ud30c\uc77c \ud65c\uc131\ud654 \ubc29\ubc95 \uc548\ub0b4",
+          "passed": true,
+          "evidence": "SPRING_PROFILES_ACTIVE \ud658\uacbd\ubcc0\uc218 \ubc29\ubc95 \uc548\ub0b4"
+        },
+        {
+          "text": "\uc2e4\ud5d8 \uc21c\uc11c \uac00\uc774\ub4dc",
+          "passed": true,
+          "evidence": "batch YAML \ud30c\uc77c \uc0dd\uc131 \u2192 \ud3ec\ud2b8 \ud1b5\uc77c \u2192 \uc2e4\ud5d8 \uc9c4\ud589 \uc21c\uc11c \uc548\ub0b4"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 3,
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.75,
+        "passed": 3,
+        "failed": 1,
+        "total": 4,
+        "time_seconds": 94.5,
+        "tokens": 19340,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "REPORT.md \ud30c\uc77c \uc0dd\uc131",
+          "passed": true,
+          "evidence": "outputs/REPORT.md \ud30c\uc77c \uc874\uc7ac \ud655\uc778"
+        },
+        {
+          "text": "NOT_ENOUGH_REPLICAS \uc5d0\ub7ec \uae30\ub85d",
+          "passed": true,
+          "evidence": "REPORT.md\uc5d0 NOT_ENOUGH_REPLICAS \ud3ec\ud568"
+        },
+        {
+          "text": "\ubbf8\uc2e4\ud589 \uc139\uc158 \ube48\uce78 \uc720\uc9c0",
+          "passed": false,
+          "evidence": "'\uc2e4\ud5d8 2\uc640 \uc2e4\ud5d8 4\uc758 \uc218\uce58(\uc751\ub2f5 \uc2dc\uac04, offset)\ub294 \uc2e4\uc81c \ub85c\uadf8\uac00 \uc5c6\uc5b4 \uc77c\ubc18\uc801\uc778 \ud328\ud134 \uae30\ubc18 \uc608\uc2dc\ub85c \uc791\uc131' - \uc2e4\ud589\ud558\uc9c0 \uc54a\uc740 \uc139\uc158\uc744 \ucd94\uc815\uac12\uc73c\ub85c \ucc44\uc6c0"
+        },
+        {
+          "text": "\uc790\ub3d9 \uc7ac\uc804\uc1a1 \ub3d9\uc791 \uae30\ub85d",
+          "passed": true,
+          "evidence": "\ube0c\ub85c\ucee4 \ubcf5\uad6c \ud6c4 retries=MAX_INT\ub85c \uc790\ub3d9 \uc7ac\uc804\uc1a1 \uc131\uacf5 \uae30\ub85d"
+        }
+      ],
+      "notes": []
+    }
+  ],
+  "run_summary": {
+    "with_skill": {
+      "pass_rate": {
+        "mean": 1.0,
+        "stddev": 0.0,
+        "min": 1.0,
+        "max": 1.0
+      },
+      "time_seconds": {
+        "mean": 74.4,
+        "stddev": 31.6005,
+        "min": 42.7,
+        "max": 105.9
+      },
+      "tokens": {
+        "mean": 25278.6667,
+        "stddev": 1384.6911,
+        "min": 23802,
+        "max": 26548
+      }
+    },
+    "without_skill": {
+      "pass_rate": {
+        "mean": 0.8333,
+        "stddev": 0.1443,
+        "min": 0.75,
+        "max": 1.0
+      },
+      "time_seconds": {
+        "mean": 68.2667,
+        "stddev": 24.883,
+        "min": 45.0,
+        "max": 94.5
+      },
+      "tokens": {
+        "mean": 17089.0,
+        "stddev": 3187.9864,
+        "min": 13441,
+        "max": 19340
+      }
+    },
+    "delta": {
+      "pass_rate": "+0.17",
+      "time_seconds": "+6.1",
+      "tokens": "+8190"
+    }
+  },
+  "notes": []
+}
