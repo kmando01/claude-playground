@@ -63,6 +63,15 @@ description: >
 
 보고서/실증 노트 작성이 완료되면 **사용자가 요청하지 않아도** 바로 commit + push까지 진행한다.
 
+### push 전 레포 확인 (필수)
+
+새 레포를 바로 만들지 말고 먼저 물어본다:
+
+> "이 실험이 기존 프로젝트(kakaopay-coupon 등)와 연관이 있나요? 연관이 있으면 해당 레포에 커밋합니다."
+
+- **연관 있음** → 기존 레포의 `docs/experiments/` 또는 적절한 하위 경로에 커밋
+- **독립 주제** → `gh repo create`로 새 레포 생성 후 push
+
 ```bash
 # 반드시 절대 경로로 cd 먼저 — git 명령은 working directory 기준으로 실행됨
 cd /절대/경로/프로젝트 && git add . && git commit -m "docs: ..." && git push
@@ -71,7 +80,6 @@ cd /절대/경로/프로젝트 && git add . && git commit -m "docs: ..." && git 
 주의:
 - `git add <file>` 단독 실행 금지 → 현재 shell의 cwd가 프로젝트 디렉토리가 아니면 `fatal: not a git repository` 발생
 - 항상 `cd 절대경로 && git ...` 패턴 사용
-- 레포가 없으면 `gh repo create`로 먼저 생성 후 진행
 
 ## 관련 스킬
 
