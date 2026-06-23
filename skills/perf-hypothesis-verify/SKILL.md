@@ -124,12 +124,17 @@ Variant (Treatment): 총 N ops, 구현 B (예: Lua GET+INCR)
 
 ## Step 3: 실험 스크립트 작성
 
+> **인라인 실행 금지**: 모든 실험 스크립트는 파일로 먼저 작성한 뒤 실행한다.
+> 인라인(셸 직접 입력, mongosh --eval '...' 등)으로 실행하면 재현 불가, 레포에 증거 없음.
+> 가이드 문서(실험 설계서)도 동일하게 파일로 저장한다.
+
 ```
 {project}/
-├── bench_control.go    # Baseline
-├── bench_variant.go    # Variant
-├── bench_mixed.go      # Collateral damage
-├── bench_ops_risk.go   # 운영 리스크 시나리오
+├── experiment-guide.md     # 가설·설계·절차 문서
+├── bench_control.go        # Baseline
+├── bench_variant.go        # Variant
+├── bench_mixed.go          # Collateral damage
+├── bench_ops_risk.go       # 운영 리스크 시나리오
 └── results/
     ├── *.json
     └── REPORT.md
