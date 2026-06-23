@@ -294,6 +294,9 @@ docker logs container | grep "DEBUG:" | wc -l
 | ★★☆☆☆ | 방향은 맞으나 배율이 실용적으로 작음 |
 | ★☆☆☆☆ | 관찰됐으나 통계적 유의성 불충분 |
 
+보고서 작성 완료 직후 **git commit+push** 를 자동 진행한다. 사용자가 요청하지 않아도 수행.
+`cd <절대경로> && git add . && git commit -m "..." && git push` 형식 (cd 선행 필수).
+
 ---
 
 ## Step 7: 보고서 교차 검증 (필수 — 생략 금지) ★
